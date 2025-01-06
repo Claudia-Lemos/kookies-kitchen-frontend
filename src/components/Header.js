@@ -1,23 +1,40 @@
+// src/components/Header.js
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';  // Import useDispatch
+import { resetCart } from '../redux/actions/cartActions'; // Import resetCart action
 
 const Header = () => {
-  const [user, setUser] = useState(null); // State to hold user info from localStorage
+  const [user, setUser] = useState(null);
+  const [cartItemCount, setCartItemCount] = useState(0);
   const navigate = useNavigate();
+  const dispatch = useDispatch();  // Initialize dispatch
 
+  // Read user from localStorage when the component mounts
   useEffect(() => {
-    // Check if the user is logged in
     const userData = localStorage.getItem('user');
     if (userData) {
-      setUser(JSON.parse(userData)); // Set user state
+      setUser(JSON.parse(userData));
     }
   }, []);
+
+  // Sync cart with localStorage and update count
+  useEffect(() => {
+    const cartData = localStorage.getItem('cart');
+    if (cartData) {
+      const cartItems = JSON.parse(cartData);
+      setCartItemCount(cartItems.length);
+    }
+  }, [user]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('cart'); // Clear cart data
+    dispatch(resetCart()); // Dispatch resetCart action to clear the cart in Redux state
     setUser(null); // Reset user state
-    navigate('/');  // Redirect to the home page after logout
+    setCartItemCount(0); // Reset cart count
+    navigate('/'); // Redirect to home
   };
 
   return (
@@ -25,18 +42,20 @@ const Header = () => {
       <h1 className="text-3xl font-bold">Kookie's Kitchen</h1>
       <nav>
         <ul className="flex space-x-6">
-        
           <li><Link to="/" className="hover:text-orange-300 transition duration-300">Home</Link></li>
           <li><Link to="/about" className="hover:text-orange-300 transition duration-300">About Us</Link></li>
           <li><Link to="/contact" className="hover:text-orange-300 transition duration-300">Contact Us</Link></li>
 
-        
           {user && user.role === 'admin' && (
             <li><Link to="/admin-dashboard" className="hover:text-orange-300 transition duration-300">Admin Dashboard</Link></li>
           )}
 
           {user && user.role === 'user' && (
-            <li><Link to="/cart" className="hover:text-orange-300 transition duration-300">Cart</Link></li>
+            <li>
+              <Link to="/cart" className="hover:text-orange-300 transition duration-300">
+                Cart ({cartItemCount})
+              </Link>
+            </li>
           )}
 
           {user ? (

@@ -16,12 +16,12 @@ const Home = () => {
   const toggleDescription = (id) => {
     setExpandedItems(prevState => ({
       ...prevState,
-      [id]: !prevState[id]
+      [id]: !prevState[id],
     }));
   };
 
   const handleAddToCart = (item) => {
-    dispatch(addToCart(item));
+    dispatch(addToCart(item));  // Dispatch the action to add the item to the cart
   };
 
   const getItemQuantity = (id) => {

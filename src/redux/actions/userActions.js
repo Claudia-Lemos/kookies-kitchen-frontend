@@ -1,23 +1,21 @@
-import axios from 'axios';
-import { loadCart } from './cartActions';  //check
+import { USER_LOGIN_SUCCESS, USER_LOGIN_FAIL } from '../actionTypes';
 
-export const loginUser = (email, password) => async (dispatch) => {
-  try {
-    const response = await axios.post('http://localhost:5000/api/login', { email, password });
-    const { token, user } = response.data;
-    localStorage.setItem('token', token);
+export const loginUser = (user) => {
+  return async (dispatch) => {
+    try {
+      dispatch({
+        type: USER_LOGIN_SUCCESS,
+        payload: user,
+      });
+    } catch (error) {
+      dispatch({ type: USER_LOGIN_FAIL });
+    }
+  };
+};
 
-    // Dispatch actions
-    dispatch({
-      type: 'USER_LOGIN_SUCCESS',
-      payload: user,
-    });
-
-    dispatch(loadCart(user.id));  // check
-  } catch (error) {
-    console.error('Login failed:', error.response ? error.response.data : error.message);
-    dispatch({
-      type: 'USER_LOGIN_FAIL',
-    });
-  }
+export const logoutUser = () => (dispatch) => {
+  localStorage.removeItem('token'); // Remove token
+  dispatch({
+    type: 'LOGOUT_USER',
+  });
 };

@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import { Route, Routes, useNavigate, Navigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginUser } from './redux/actions/userActions';
-import { jwtDecode } from 'jwt-decode';  
+import { loginUser, logoutUser } from './redux/actions/userActions';
+import { loadCart } from './redux/actions/cartActions'; // Import loadCart action
+import { jwtDecode } from 'jwt-decode';
 
 import Home from './pages/Home';
 import About from './pages/About';
@@ -11,42 +12,47 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import Cart from './pages/Cart';
 import Login from './pages/Login';
-import AdminDashboard from './pages/AdminDashboard';
+import AdminMessageDashboard from './pages/AdminDashboard';
 
 const App = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
-  // Get user authentication state from Redux store
-  const { token, role, isAuthenticated } = useSelector((state) => state.user || { token: null, role: null, isAuthenticated: false });
 
-  // Check if the user is authenticated and redirect them accordingly
+  // Safe destructuring with optional chaining
+  const { token, role, isAuthenticated, email } = useSelector(state => state.user || {});
+
+  // Get cart items from the Redux store
+  const cartItems = useSelector(state => state.cart.items);
+
   useEffect(() => {
+    // Try to login automatically using token
     const localToken = localStorage.getItem('token');
     if (localToken && !token) {
       try {
-        const decodedUser = jwtDecode(localToken);
+        const decodedUser = jwtDecode(localToken); // Decode token
         const email = decodedUser?.email;
         if (email) {
-          dispatch(loginUser(email, 'password')); // Automatically log in with token
+          dispatch(loginUser(email, 'password')); // Log the user in
         }
       } catch (error) {
-        console.error("Invalid token", error);
-        localStorage.removeItem('token'); // Remove invalid token if any
+        console.error('Invalid token', error);
+        localStorage.removeItem('token'); // Remove invalid token
+        dispatch(logoutUser()); // Logout user
       }
     }
   }, [dispatch, token]);
 
-  // If user is authenticated, navigate accordingly
   useEffect(() => {
     if (isAuthenticated) {
       if (role === 'admin') {
-        navigate('/admin-dashboard');
+        navigate('/admin-dashboard'); // Redirect to admin dashboard
       } else {
-        navigate('/cart');
+        navigate('/cart'); // Redirect to cart for non-admin users
+        // After login, load the user's cart
+        dispatch(loadCart(email)); // Load cart for the logged-in user
       }
     }
-  }, [isAuthenticated, role, navigate]);
+  }, [isAuthenticated, role, email, dispatch, navigate]);
 
   return (
     <div className="App">
@@ -56,9 +62,15 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/cart" element={isAuthenticated ? <Cart /> : <Navigate to="/login" />} />
+          <Route
+            path="/cart"
+            element={isAuthenticated ? <Cart /> : <Navigate to="/login" />}
+          />
           <Route path="/login" element={<Login />} />
-          <Route path="/admin-dashboard" element={role === 'admin' ? <AdminDashboard /> : <Navigate to="/" />} />
+          <Route
+            path="/admin-dashboard"
+            element={role === 'admin' ? <AdminMessageDashboard /> : <Navigate to="/" />}
+          />
         </Routes>
       </main>
       <Footer />

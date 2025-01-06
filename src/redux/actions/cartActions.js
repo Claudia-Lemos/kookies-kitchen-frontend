@@ -1,49 +1,49 @@
-import axios from 'axios';
-
-// Action types
-export const ADD_TO_CART = 'ADD_TO_CART';
+// cartActions.js
+export const LOAD_CART = 'LOAD_CART';
 export const REMOVE_FROM_CART = 'REMOVE_FROM_CART';
 export const UPDATE_CART_ITEM = 'UPDATE_CART_ITEM';
-export const LOAD_CART_SUCCESS = 'LOAD_CART_SUCCESS';
-export const LOAD_CART_FAIL = 'LOAD_CART_FAIL';
+export const ADD_TO_CART = 'ADD_TO_CART';
+export const RESET_CART = 'RESET_CART';
 
-// Action to add item to cart
-export const addToCart = (item) => {
-  return {
-    type: ADD_TO_CART,
-    payload: item,
-  };
-};
-
-// Action to remove item from cart
-export const removeFromCart = (id) => {
-  return {
-    type: REMOVE_FROM_CART,
-    payload: id,
-  };
-};
-
-// Action to update item quantity in cart
-export const updateCartItem = (id, quantity) => {
-  return {
-    type: UPDATE_CART_ITEM,
-    payload: { id, quantity },
-  };
-};
-
-// Action to load cart from the backend
+// Action to load cart
 export const loadCart = (userId) => async (dispatch) => {
   try {
-    const response = await axios.get(`http://localhost:5000/api/cart/${userId}`);
-    dispatch({
-      type: LOAD_CART_SUCCESS,
-      payload: response.data,  
-    });
+    const response = await fetch(`/api/cart/${userId}`);
+    const data = await response.json();
+    if (response.ok) {
+      dispatch({
+        type: LOAD_CART,
+        payload: data.items, // Ensure the cart items are returned
+      });
+    }
   } catch (error) {
-    console.error('Error loading cart:', error.message);
+    console.error('Error loading cart:', error);
     dispatch({
-      type: LOAD_CART_FAIL,
-      payload: error.message,
+      type: 'CART_ERROR',
+      payload: 'Failed to load cart',
     });
   }
 };
+
+// Action to add an item to the cart
+export const addToCart = (item) => ({
+  type: ADD_TO_CART,
+  payload: item,
+});
+
+// Action to remove an item from the cart
+export const removeFromCart = (itemId) => ({
+  type: REMOVE_FROM_CART,
+  payload: itemId, // Send the item ID to remove it
+});
+
+// Action to update the quantity of a cart item
+export const updateCartItem = (itemId, quantity) => ({
+  type: UPDATE_CART_ITEM,
+  payload: { itemId, quantity },
+});
+
+// Action to reset the cart
+export const resetCart = () => ({
+  type: RESET_CART,
+});
