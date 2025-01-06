@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Route, Routes, useNavigate, Navigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from './redux/actions/userActions';
-import { jwtDecode } from 'jwt-decode';  // Ensure you are using jwt-decode correctly
+import { jwtDecode } from 'jwt-decode';  
 
 import Home from './pages/Home';
 import About from './pages/About';

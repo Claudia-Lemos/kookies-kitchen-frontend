@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { loadCart } from './cartActions';  // Assuming you have a loadCart action
+import { loadCart } from './cartActions';  //check
 
 export const loginUser = (email, password) => async (dispatch) => {
   try {
@@ -13,8 +13,7 @@ export const loginUser = (email, password) => async (dispatch) => {
       payload: user,
     });
 
-    // Dispatch loadCart after login (make sure to pass user.id)
-    dispatch(loadCart(user.id));  // Assuming you have a loadCart action to fetch cart items for the user
+    dispatch(loadCart(user.id));  // check
   } catch (error) {
     console.error('Login failed:', error.response ? error.response.data : error.message);
     dispatch({

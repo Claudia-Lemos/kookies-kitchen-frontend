@@ -3,7 +3,7 @@ export const userReducer = (state = initialState, action) => {
     case 'USER_LOGIN_SUCCESS':
       return {
         ...state,
-        isAuthenticated: true,  // Make sure this is correctly updated
+        isAuthenticated: true,  
         user: action.payload,
         token: localStorage.getItem('token'), // Store token from localStorage
       };

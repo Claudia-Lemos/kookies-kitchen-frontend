@@ -1,5 +1,3 @@
-// cartActions.js
-
 import axios from 'axios';
 
 // Action types
@@ -39,7 +37,7 @@ export const loadCart = (userId) => async (dispatch) => {
     const response = await axios.get(`http://localhost:5000/api/cart/${userId}`);
     dispatch({
       type: LOAD_CART_SUCCESS,
-      payload: response.data,  // Assuming the response contains cart items
+      payload: response.data,  
     });
   } catch (error) {
     console.error('Error loading cart:', error.message);

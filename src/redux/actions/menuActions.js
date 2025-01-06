@@ -1,4 +1,3 @@
-// actions/menuActions.js
 import { FETCH_MENU_REQUEST, FETCH_MENU_SUCCESS, FETCH_MENU_FAILURE } from '../actionTypes';
 
 export const fetchMenuItems = () => async (dispatch) => {
@@ -6,8 +5,7 @@ export const fetchMenuItems = () => async (dispatch) => {
     // Dispatch request action before API call
     dispatch({ type: FETCH_MENU_REQUEST });
 
-    // Replace 'YOUR_API_URL' with the actual API endpoint you're calling to fetch menu items
-    const response = await fetch('http://localhost:5000/api/menu');  // Correct URL to your backend API
+    const response = await fetch('http://localhost:5000/api/menu');  
     
     // Check if the response is successful
     if (!response.ok) {

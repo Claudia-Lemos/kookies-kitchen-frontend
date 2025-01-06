@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { removeFromCart, updateCartItem, loadCart } from '../redux/actions/cartActions'; // Correctly importing all necessary actions
+import { removeFromCart, updateCartItem, loadCart } from '../redux/actions/cartActions'; 
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -9,7 +9,7 @@ const Cart = () => {
 
   useEffect(() => {
     if (isAuthenticated && !cartItems.length) {
-      // Load the cart if user is authenticated and cart is empty
+    
       dispatch(loadCart(user.id));
     }
   }, [dispatch, isAuthenticated, user, cartItems.length]);
@@ -41,7 +41,7 @@ const Cart = () => {
       {loading ? (
         <div className="text-center">
           <p>Loading cart...</p>
-          <div className="spinner"> {/* You can use a loading spinner or animation here */} </div>
+          <div className="spinner"></div>
         </div>
       ) : error ? (
         <p className="text-red-500 text-center">{error}</p>

@@ -1,6 +1,6 @@
-import { configureStore } from '@reduxjs/toolkit'; // import configureStore from Redux Toolkit
-import rootReducer from './reducers'; // your root reducer
-import {thunk} from 'redux-thunk'; // named import from redux-thunk
+import { configureStore } from '@reduxjs/toolkit';
+import rootReducer from './reducers'; 
+import {thunk} from 'redux-thunk'; 
 
 // Create the Redux store and apply middleware (redux-thunk)
 const store = configureStore({

@@ -1,5 +1,3 @@
-// src/axiosConfig.js
-
 import axios from 'axios';
 
 // If a token exists in localStorage, add it to the Authorization header

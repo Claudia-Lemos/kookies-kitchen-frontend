@@ -19,7 +19,7 @@ export const removeFromCart = (id) => {
 // Action to create an order
 export const createOrder = (order) => async (dispatch) => {
   try {
-    const { data } = await axios.post('/api/orders', order); // Assuming this endpoint exists in your API
+    const { data } = await axios.post('/api/orders', order); 
     dispatch({
       type: 'CREATE_ORDER_SUCCESS',
       payload: data,

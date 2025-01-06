@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
+import { useNavigate } from 'react-router-dom'; 
 
 const AdminDashboard = () => {
   const [messages, setMessages] = useState([]);
   const [orders, setOrders] = useState([]);
-  const [error, setError] = useState(null); // Add error state
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [error, setError] = useState(null); 
+  const [loading, setLoading] = useState(true); 
 
   const navigate = useNavigate(); // Initialize navigate
 
@@ -45,11 +45,11 @@ const AdminDashboard = () => {
     <div className="p-6 bg-orange-50 min-h-screen">
       <h2 className="text-2xl text-orange-500 font-bold mb-4">Admin Dashboard</h2>
 
-      {error && <div className="text-red-500 mb-4">{error}</div>} {/* Display error if exists */}
+      {error && <div className="text-red-500 mb-4">{error}</div>} 
 
       <h3 className="text-xl text-orange-500 mb-2">Messages</h3>
       {loading ? (
-        <p>Loading...</p> // Show loading state while data is being fetched
+        <p>Loading...</p>
       ) : (
         messages.map((msg, index) => (
           <div key={index} className="bg-white p-4 mb-4 rounded shadow-md">
