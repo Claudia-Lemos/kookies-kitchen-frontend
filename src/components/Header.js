@@ -1,83 +1,87 @@
-// src/components/Header.js
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';  // Import useDispatch
-import { resetCart } from '../redux/actions/cartActions'; // Import resetCart action
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { logoutUser } from '../redux/actions/userActions';
+import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
-  const [user, setUser] = useState(null);
-  const [cartItemCount, setCartItemCount] = useState(0);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const dispatch = useDispatch();  // Initialize dispatch
-
-  // Read user from localStorage when the component mounts
-  useEffect(() => {
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
-  }, []);
-
-  // Sync cart with localStorage and update count
-  useEffect(() => {
-    const cartData = localStorage.getItem('cart');
-    if (cartData) {
-      const cartItems = JSON.parse(cartData);
-      setCartItemCount(cartItems.length);
-    }
-  }, [user]);
+  
+  // Destructuring with fallback
+  const { isAuthenticated, email, role } = useSelector((state) => state.auth) || {};
+  
+  // Get the cart items count
+  const cartCount = useSelector(state => state.cart.items?.reduce((total, item) => total + item.quantity, 0) || 0); // Total count of items in the cart
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    localStorage.removeItem('cart'); // Clear cart data
-    dispatch(resetCart()); // Dispatch resetCart action to clear the cart in Redux state
-    setUser(null); // Reset user state
-    setCartItemCount(0); // Reset cart count
-    navigate('/'); // Redirect to home
+    dispatch(logoutUser());  // Dispatch logout action
+    navigate('/');  // Redirect to home after logout
+  };
+
+  const goToCart = () => {
+    navigate('/cart');  // Navigate to the cart page
   };
 
   return (
-    <header className="flex justify-between items-center p-4 bg-primary text-white fixed top-0 left-0 right-0 z-10 shadow-lg">
-      <h1 className="text-3xl font-bold">Kookie's Kitchen</h1>
-      <nav>
-        <ul className="flex space-x-6">
-          <li><Link to="/" className="hover:text-orange-300 transition duration-300">Home</Link></li>
-          <li><Link to="/about" className="hover:text-orange-300 transition duration-300">About Us</Link></li>
-          <li><Link to="/contact" className="hover:text-orange-300 transition duration-300">Contact Us</Link></li>
+    <header className="bg-orange-500 text-white py-4 px-8">
+      <div className="container mx-auto flex flex-wrap justify-between items-center">
+        <img
+          src="https://tse3.mm.bing.net/th?id=OIP.LFlaChCXlYuFc2QTdP9VTgHaHv&pid=Api&P=0&h=180"
+          alt="Kookie's Kitchen"
+          className="h-20"
+        />
+        <nav className="flex flex-wrap justify-between items-center space-x-4 md:space-x-6 w-full md:w-auto">
+          {/* Navigation links */}
+          <button onClick={() => navigate('/')} className="text-xl py-2 hover:bg-orange-600 rounded">
+            Home
+          </button>
+          <button onClick={() => navigate('/about')} className="text-xl py-2 hover:bg-orange-600 rounded">
+            About Us
+          </button>
+          <button onClick={() => navigate('/contact')} className="text-xl py-2 hover:bg-orange-600 rounded">
+            Contact Us
+          </button>
 
-          {user && user.role === 'admin' && (
-            <li><Link to="/admin-dashboard" className="hover:text-orange-300 transition duration-300">Admin Dashboard</Link></li>
-          )}
+          {isAuthenticated ? (
+            <div className="flex items-center space-x-4 mt-4 md:mt-0">
+              <p className="text-xl">Welcome, {email} ({role})</p>
+              <button
+                onClick={goToCart}
+                className="px-4 py-2 bg-orange-600 text-white rounded relative"
+              >
+                Cart
+                {/* Display cart item count */}
+                {cartCount > 0 && (
+                  <span className="absolute top-0 right-0 px-2 py-1 text-sm font-bold text-black bg-orange-600 rounded-full">{cartCount}</span>
+                )}
+              </button>
 
-          {user && user.role === 'user' && (
-            <li>
-              <Link to="/cart" className="hover:text-orange-300 transition duration-300">
-                Cart ({cartItemCount})
-              </Link>
-            </li>
-          )}
+              {role === 'admin' && (
+                <button
+                  onClick={() => navigate('/admin-dashboard')}
+                  className="ml-4 px-4 py-2 bg-orange-600 text-white rounded"
+                >
+                  Admin Dashboard
+                </button>
+              )}
 
-          {user ? (
-            <div className="flex items-center space-x-4">
-              <span className="text-lg">Welcome, {user.role.charAt(0).toUpperCase() + user.role.slice(1)}</span>
-              <button 
-                onClick={handleLogout} 
-                className="bg-red-600 px-4 py-2 rounded hover:bg-red-700 transition duration-300"
+              <button
+                onClick={handleLogout}
+                className="ml-4 px-4 py-2 bg-orange-600 text-white rounded"
               >
                 Logout
               </button>
             </div>
           ) : (
-            <Link 
-              to="/login" 
-              className="bg-blue-600 px-4 py-2 rounded hover:bg-blue-700 transition duration-300"
+            <button
+              onClick={() => navigate('/login')}
+              className="px-4 py-2 bg-orange-600 text-white rounded"
             >
               Login
-            </Link>
+            </button>
           )}
-        </ul>
-      </nav>
+        </nav>
+      </div>
     </header>
   );
 };

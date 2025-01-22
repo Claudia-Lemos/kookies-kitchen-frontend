@@ -1,69 +1,29 @@
 import axios from 'axios';
 
-// Action to add item to the cart
-export const addToCart = (item) => {
-  return {
-    type: 'ADD_TO_CART',
-    payload: item,
-  };
-};
-
-// Action to remove item from the cart
-export const removeFromCart = (id) => {
-  return {
-    type: 'REMOVE_FROM_CART',
-    payload: id,
-  };
-};
-
-// Action to create an order
-export const createOrder = (order) => async (dispatch) => {
+// Action to place an order
+export const placeOrder = (orderData) => async (dispatch, getState) => {
   try {
-    const { data } = await axios.post('/api/orders', order); 
-    dispatch({
-      type: 'CREATE_ORDER_SUCCESS',
-      payload: data,
-    });
+    dispatch({ type: 'ORDER_PLACING' });
+
+    const { userLogin: { userInfo } } = getState(); // Get user info from state
+
+    // Make sure to pass the token in Authorization header
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.post('/api/orders', orderData, config);
+
+    dispatch({ type: 'ORDER_PLACED', payload: data });
+
   } catch (error) {
     dispatch({
-      type: 'CREATE_ORDER_FAIL',
-      payload: error.message,
-    });
-  }
-};
-
-// Action to accept an order
-export const acceptOrder = (orderId) => async (dispatch) => {
-  try {
-    const { data } = await axios.patch(`/api/orders/update/${orderId}`, {
-      status: 'accepted',
-    });
-    dispatch({
-      type: 'ACCEPT_ORDER_SUCCESS',
-      payload: data,
-    });
-  } catch (error) {
-    dispatch({
-      type: 'ACCEPT_ORDER_FAIL',
-      payload: error.message,
-    });
-  }
-};
-
-// Action to reject an order
-export const rejectOrder = (orderId) => async (dispatch) => {
-  try {
-    const { data } = await axios.patch(`/api/orders/update/${orderId}`, {
-      status: 'rejected',
-    });
-    dispatch({
-      type: 'REJECT_ORDER_SUCCESS',
-      payload: data,
-    });
-  } catch (error) {
-    dispatch({
-      type: 'REJECT_ORDER_FAIL',
-      payload: error.message,
+      type: 'ORDER_PLACE_FAIL',
+      payload: error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message,
     });
   }
 };

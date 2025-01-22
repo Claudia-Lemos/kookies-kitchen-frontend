@@ -1,22 +1,46 @@
-// import axios from 'axios';
+// loginAction.js (userActions.js)
+import axios from 'axios';
 
-// export const loginUser = (email, password) => async (dispatch) => {
-//   try {
-//     // POST request to backend's /api/login endpoint
-//     const response = await axios.post('/api/login', { email, password });
+// Action to load user from localStorage
+export const loadUserFromLocalStorage = () => (dispatch) => {
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const token = localStorage.getItem('authToken');
+    if (user && token) {
+      dispatch({
+        type: 'USER_LOGIN_SUCCESS',
+        payload: { user, token },
+      });
+    }
+  } catch (error) {
+    console.error('Error loading user from localStorage:', error);
+  }
+};
 
-//     const data = response.data;
-//     if (data.token) {
-//       // Store token in localStorage and set user in Redux
-//       localStorage.setItem('token', data.token);
-//       dispatch({
-//         type: 'SET_USER',
-//         payload: data.user, // Store user data in Redux
-//       });
-//     }
+// Action to log out the user
+export const logoutUser = () => (dispatch) => {
+  localStorage.removeItem('user');
+  localStorage.removeItem('authToken');
+  dispatch({
+    type: 'USER_LOGOUT',
+  });
+};
 
-//   } catch (error) {
-//     console.error("Login failed:", error);
-//     throw new Error(error.response?.data?.message || 'Login failed');
-//   }
-// };
+// Action to log in the user (ensure token is stored)
+export const loginUser = (email, password) => async (dispatch) => {
+  try {
+    const response = await axios.post('/api/login', { email, password });
+    const { token, user } = response.data;
+
+    // Store token and user in localStorage
+    localStorage.setItem('authToken', token);  // Store token as 'authToken'
+    localStorage.setItem('user', JSON.stringify(user));  // Store user
+
+    dispatch({
+      type: 'USER_LOGIN_SUCCESS',
+      payload: user,
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+  }
+};

@@ -1,39 +1,32 @@
-// cartReducer.js
 const initialState = {
-  items: [], // Cart items will be stored here
+  items: [],
 };
 
-const cartReducer = (state = initialState, action) => {
+export const cartReducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'LOAD_CART':
-      return {
-        ...state,
-        items: action.payload,
-      };
     case 'ADD_TO_CART':
       return {
         ...state,
-        items: [...state.items, action.payload],
-      };
-    case 'REMOVE_FROM_CART':
-      return {
-        ...state,
-        items: state.items.filter(item => item.id !== action.payload),
+        items: [...state.items, { ...action.payload.item, email: action.payload.userEmail, quantity: 1 }],
       };
     case 'UPDATE_CART_ITEM':
       return {
         ...state,
-        items: state.items.map((item) =>
-          item.id === action.payload.itemId
+        items: state.items.map(item =>
+          item.itemId === action.payload.itemId && item.email === action.payload.userEmail
             ? { ...item, quantity: action.payload.quantity }
             : item
         ),
       };
-    case 'RESET_CART':
-      return initialState;
+    case 'REMOVE_FROM_CART':
+      return {
+        ...state,
+        items: state.items.filter(item => item.itemId !== action.payload.itemId || item.email !== action.payload.userEmail),
+      };
     default:
       return state;
   }
 };
+
 
 export default cartReducer;

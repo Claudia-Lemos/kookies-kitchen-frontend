@@ -1,30 +1,24 @@
-// userReducer.js
-
-
 const initialState = {
   isAuthenticated: false,
+  user: null,
   token: null,
-  role: null,
-  email: null,  // Add email to initial state
 };
 
-const userReducer = (state = initialState, action) => {
+export const userReducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'LOGIN':
+    case 'USER_LOGIN_SUCCESS':
       return {
         ...state,
         isAuthenticated: true,
+        user: action.payload.user,
         token: action.payload.token,
-        role: action.payload.role,
-        email: action.payload.email,  // Ensure email is added to state
       };
-    case 'LOGOUT_USER':
+    case 'USER_LOGOUT':
       return {
         ...state,
         isAuthenticated: false,
+        user: null,
         token: null,
-        role: null,
-        email: null,  // Reset email when logging out
       };
     default:
       return state;

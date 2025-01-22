@@ -12,4 +12,3 @@ const initialState = {
   };
   
   export default orderReducer;
-  

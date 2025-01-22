@@ -1,6 +1,4 @@
-import {  FETCH_MENU_REQUEST, 
-          FETCH_MENU_SUCCESS,
-          FETCH_MENU_FAILURE } from '../actionTypes';
+import { FETCH_MENU_REQUEST, FETCH_MENU_SUCCESS, FETCH_MENU_FAILURE } from '../actionTypes';
 
 const initialState = {
   loading: false,
