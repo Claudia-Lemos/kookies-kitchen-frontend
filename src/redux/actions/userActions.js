@@ -4,7 +4,7 @@ import axios from 'axios';
 // Action to load user from localStorage
 export const loadUserFromLocalStorage = () => (dispatch) => {
   const user = JSON.parse(localStorage.getItem('user'));
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('authToken');
 
   if (user && token) {
     dispatch({
@@ -21,7 +21,7 @@ export const loadUserFromLocalStorage = () => (dispatch) => {
 export const logoutUser = () => (dispatch) => {
   // Clear localStorage and dispatch logout
   localStorage.removeItem('user');
-  localStorage.removeItem('token');
+  localStorage.removeItem('authToken');
   dispatch({
     type: 'USER_LOGOUT',
   });

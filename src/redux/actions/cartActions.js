@@ -1,22 +1,27 @@
 import axiosInstance from '../../../src/axiosInstance';
 
+// Helper function for getting the auth token
+const getAuthToken = () => {
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    alert('Please log in to perform this action');
+  }
+  return token;
+};
+
 // Action to load the cart for a user
 export const loadCart = (email) => async (dispatch) => {
   try {
-    const token = localStorage.getItem('authToken');  // Retrieve the token from localStorage
-
-    if (!token) {
-      alert('Please log in to load your cart');
-      return;
-    }
+    const token = getAuthToken();
+    if (!token) return;
 
     const response = await axiosInstance.get(`/api/cart/${email}`, {
       headers: {
-        Authorization: `Bearer ${token}`,  // Send the token in the Authorization header
+        Authorization: `Bearer ${token}`,
       },
     });
 
-    if (response.data) {
+    if (response.status === 200 && response.data) {
       dispatch({
         type: 'LOAD_CART',
         payload: {
@@ -34,33 +39,28 @@ export const loadCart = (email) => async (dispatch) => {
 
 // Action to update a cart item (Increase or Decrease quantity)
 export const updateCartItem = (email, itemId, quantity) => async (dispatch) => {
-  const token = localStorage.getItem('authToken');  // Retrieve the token from localStorage
-
-  if (!token) {
-    alert('Please log in to update your cart');
-    return;
-  }
+  const token = getAuthToken();
+  if (!token) return;
 
   try {
     const response = await axiosInstance.post(
       `/api/cart/${email}`,
       { 
-        itemId: itemId,   // Use itemId instead of item._id
-        quantity: quantity,  // Pass updated quantity
+        itemId: itemId, // Corrected reference here
+        quantity: quantity, 
       },
       {
         headers: {
-          Authorization: `Bearer ${token}`,  // Send the token in the Authorization header
+          Authorization: `Bearer ${token}`,
         },
       }
     );
 
-    // Dispatch the updated items after API call success
     dispatch({
       type: 'UPDATE_CART_ITEM',
       payload: {
         email,
-        items: response.data.items, // Ensure the response returns updated items
+        items: response.data.items, // Ensure the response contains updated items
       },
     });
   } catch (error) {
@@ -70,12 +70,8 @@ export const updateCartItem = (email, itemId, quantity) => async (dispatch) => {
 
 // Action to remove an item from the cart
 export const removeFromCart = (email, itemId) => async (dispatch) => {
-  const token = localStorage.getItem('authToken');  // Retrieve the token from localStorage
-
-  if (!token) {
-    alert('Please log in to remove items from your cart');
-    return;
-  }
+  const token = getAuthToken();
+  if (!token) return;
 
   try {
     const response = await axiosInstance.delete(
@@ -83,7 +79,7 @@ export const removeFromCart = (email, itemId) => async (dispatch) => {
       {
         data: { itemId },
         headers: {
-          Authorization: `Bearer ${token}`,  // Send the token in the Authorization header
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -102,25 +98,19 @@ export const removeFromCart = (email, itemId) => async (dispatch) => {
 
 // Action to add an item to the cart
 export const addToCart = (item, email) => async (dispatch) => {
-  const token = localStorage.getItem('authToken');  // Retrieve the token from localStorage
-  console.log('User email:', email);
-  console.log('Token is:', token); // Log token to ensure it's available
-
-  if (!token) {
-    alert('Please log in to add items to the cart');
-    return;
-  }
+  const token = getAuthToken();
+  if (!token) return;
 
   try {
     const response = await axiosInstance.post(
       `/api/cart/${email}`,
       {
-        itemId: item._id,  // Use the ObjectId from the item (ensure it's using the correct field, _id)
-        quantity: 1,  // Add the item with a quantity of 1 initially
+        itemId: item._id, // Ensure correct field for itemId
+        quantity: 1, 
       },
       {
         headers: {
-          Authorization: `Bearer ${token}`,  // Send the token in the Authorization header
+          Authorization: `Bearer ${token}`,
         },
       }
     );

@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux'; 
+import { useDispatch, useSelector } from 'react-redux';
 import { fetchMenuItems } from '../redux/actions/menuActions';
 import { addToCart, updateCartItem, removeFromCart } from '../redux/actions/cartActions';
-import { selectMemoizedCartItems } from "../selectors/cartSelectors"; 
+import { selectMemoizedCartItems } from "../selectors/cartSelectors";
 
 const Home = () => {
   const dispatch = useDispatch();
   const { menuItems = [], loading = false, error = null } = useSelector(state => state.menu || {});
   const user = useSelector(state => state.auth);
+
   const [expandedItems, setExpandedItems] = useState({});
 
-  const userEmail = user?.email || ''; // Safely access user email, fallback to empty string
+  const userEmail = user?.email || '';
 
   // Memoized selector to fetch cart items specific to the logged-in user
   const cartItems = useSelector(state => selectMemoizedCartItems(state, userEmail));
 
+  // Fetch menu items only when the component mounts
   useEffect(() => {
     dispatch(fetchMenuItems());
   }, [dispatch]);
@@ -34,10 +36,8 @@ const Home = () => {
 
     const itemInCart = cartItems.find((cartItem) => cartItem.itemId === item._id);
     if (itemInCart) {
-      // Dispatch update action if the item is already in the cart
       dispatch(updateCartItem(user.email, item._id, itemInCart.quantity + 1));
     } else {
-      // Dispatch add to cart action if the item is not in the cart
       dispatch(addToCart(item, user.email));
     }
   };
@@ -45,10 +45,8 @@ const Home = () => {
   const handleDecreaseQuantity = (item) => {
     const itemInCart = cartItems.find((cartItem) => cartItem.itemId === item._id);
     if (itemInCart && itemInCart.quantity > 1) {
-      // Dispatch update action to decrease quantity
       dispatch(updateCartItem(user.email, item._id, itemInCart.quantity - 1));
     } else {
-      // Remove item from cart if the quantity is 1
       dispatch(removeFromCart(user.email, item._id));
     }
   };
@@ -57,6 +55,11 @@ const Home = () => {
     const item = cartItems.find((item) => item.itemId === id);
     return item ? item.quantity : 0;
   };
+
+  // Early return if the user is not authenticated or menu is loading
+  if (!user || loading) {
+    return <p className="text-center text-gray-500">Loading...</p>;
+  }
 
   return (
     <div className="min-h-screen bg-orange-50 py-8">
@@ -68,15 +71,8 @@ const Home = () => {
 
         <h1 className="text-2xl text-orange-600 font-bold mb-4 text-center">Our Menu</h1>
 
-        {loading ? (
-          <div className="flex justify-center items-center space-x-2">
-            <div className="w-8 h-8 border-4 border-t-transparent border-orange-500 rounded-full animate-spin"></div>
-            <span className="text-xl text-gray-700">Loading...</span>
-          </div>
-        ) : error ? (
+        {error ? (
           <div className="text-center text-red-500 text-xl">{error}</div>
-        ) : menuItems.length === 0 ? (
-          <div className="text-center text-gray-600 text-xl">No Menu Items available</div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {menuItems.map((item) => (

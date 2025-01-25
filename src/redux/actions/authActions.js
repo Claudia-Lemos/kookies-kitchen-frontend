@@ -2,7 +2,7 @@ import { jwtDecode } from 'jwt-decode';
 
 // Action to load user from localStorage (if token exists)
 export const loadUserFromLocalStorage = () => async (dispatch) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('authToken');
   
   if (token) {
     try {
@@ -13,7 +13,7 @@ export const loadUserFromLocalStorage = () => async (dispatch) => {
       const currentTime = Date.now() / 1000;
       if (decodedUser.exp < currentTime) {
         // If token is expired, remove it and mark as not authenticated
-        localStorage.removeItem('token');
+        localStorage.removeItem('authToken');
         dispatch({
           type: 'USER_LOGIN_FAIL',
           payload: { isAuthenticated: false },
@@ -49,7 +49,7 @@ export const loadUserFromLocalStorage = () => async (dispatch) => {
 
 // Action for user logout
 export const logoutUser = () => (dispatch) => {
-  localStorage.removeItem('token'); // Remove token from localStorage on logout
+  localStorage.removeItem('authToken'); // Remove token from localStorage on logout
   dispatch({
     type: 'USER_LOGOUT',
     payload: { isAuthenticated: false }, // Mark user as not authenticated
