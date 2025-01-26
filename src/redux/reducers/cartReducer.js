@@ -7,7 +7,7 @@ export const cartReducer = (state = initialState, action) => {
     case 'ADD_TO_CART':
       return {
         ...state,
-        items: [...state.items, { ...action.payload.item, email: action.payload.userEmail, quantity: 1 }],
+        items: action.payload.items, // Updated items list after addition
       };
     case 'UPDATE_CART_ITEM':
       return {
@@ -27,6 +27,5 @@ export const cartReducer = (state = initialState, action) => {
       return state;
   }
 };
-
 
 export default cartReducer;

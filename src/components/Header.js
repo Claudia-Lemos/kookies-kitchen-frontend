@@ -47,12 +47,14 @@ const Header = () => {
               <p className="text-xl">Welcome, {email} ({role})</p>
               <button
                 onClick={goToCart}
-                className="px-4 py-2 bg-orange-600 text-white rounded relative"
+                className="relative flex items-center px-4 py-2 bg-orange-600 text-white rounded"
               >
                 Cart
                 {/* Display cart item count */}
                 {cartCount > 0 && (
-                  <span className="absolute top-0 right-0 px-2 py-1 text-sm font-bold text-black bg-orange-600 rounded-full">{cartCount}</span>
+                  <span className="absolute top-0 right-0 inline-block px-2 py-1 text-sm font-bold text-black bg-orange-600 rounded-full transform translate-x-1/2 -translate-y-1/2">
+                    {cartCount}
+                  </span>
                 )}
               </button>
 

@@ -28,28 +28,28 @@ const Home = () => {
     }));
   };
 
-  const handleIncreaseQuantity = (item) => {
-    if (!user?.isAuthenticated || !user?.email) {
-      alert('Please log in to modify your cart');
-      return;
-    }
+ const handleIncreaseQuantity = (item) => {
+  if (!user?.isAuthenticated || !user?.email) {
+    alert('Please log in to modify your cart');
+    return;
+  }
 
-    const itemInCart = cartItems.find((cartItem) => cartItem.itemId === item._id);
-    if (itemInCart) {
-      dispatch(updateCartItem(user.email, item._id, itemInCart.quantity + 1));
-    } else {
-      dispatch(addToCart(item, user.email));
-    }
-  };
+  const itemInCart = cartItems.find((cartItem) => cartItem.itemId === item._id);
+  if (itemInCart) {
+    dispatch(updateCartItem(user.email, item._id, itemInCart.quantity + 1));
+  } else {
+    dispatch(addToCart(item, user.email));
+  }
+};
 
-  const handleDecreaseQuantity = (item) => {
-    const itemInCart = cartItems.find((cartItem) => cartItem.itemId === item._id);
-    if (itemInCart && itemInCart.quantity > 1) {
-      dispatch(updateCartItem(user.email, item._id, itemInCart.quantity - 1));
-    } else {
-      dispatch(removeFromCart(user.email, item._id));
-    }
-  };
+const handleDecreaseQuantity = (item) => {
+  const itemInCart = cartItems.find((cartItem) => cartItem.itemId === item._id);
+  if (itemInCart && itemInCart.quantity > 1) {
+    dispatch(updateCartItem(user.email, item._id, itemInCart.quantity - 1));
+  } else {
+    dispatch(removeFromCart(user.email, item._id));
+  }
+};
 
   const getItemQuantity = (id) => {
     const item = cartItems.find((item) => item.itemId === id);
